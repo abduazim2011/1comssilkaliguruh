@@ -1,17 +1,25 @@
 from telethon import TelegramClient, events
 from time import sleep
 
+# =======================
+# Настройки Telethon
+# =======================
 api_id = 28846045
 api_hash = '2bfabb13674fe7ecb587937f026db5e6'
-phone = '+998977838293'
+session_name = '977838293'  # имя .session файла
 
-client = TelegramClient('977838293', api_id, api_hash)
+client = TelegramClient(session_name, api_id, api_hash)
 
+# =======================
+# Переменные бота
+# =======================
 reply_enabled = True
-reply_text = '9860176619018904'
-target_group = None  # сюда будет username группы без @
+reply_text = None  # текст ответа по умолчанию
+target_group = None  # username группы без @
 
+# =======================
 # Команды из Избранного
+# =======================
 @client.on(events.NewMessage(chats='me'))
 async def favorites_handler(event):
     global reply_enabled, reply_text, target_group
@@ -54,7 +62,9 @@ async def favorites_handler(event):
         )
         await event.reply(info_text)
 
-# Реакция на сообщения из канала
+# =======================
+# Автоответ на сообщения из канала
+# =======================
 @client.on(events.NewMessage)
 async def channel_handler(event):
     global reply_enabled, reply_text, target_group
@@ -81,6 +91,15 @@ async def channel_handler(event):
             print(f"❌ Ошибка попытки {attempt + 1}: {e}")
             sleep(0.5)
 
+# =======================
+# Старт бота
+# =======================
 print("🚀 Бот запущен. Управляй через Избранное...")
-client.start(phone=phone)
+
+try:
+    client.start()  # старт через .session, без интерактивного ввода
+except Exception as e:
+    print("❌ Ошибка запуска клиента:", e)
+    exit()
+
 client.run_until_disconnected()
